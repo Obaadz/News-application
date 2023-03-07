@@ -18,14 +18,13 @@ export default class PostController {
         user = request.auth;
 
       if (!user?.email) throw new Error(ERROR_MESSAGES.INCORRECT_EMAIL);
-      if (!(post.author && post.content && post.createAt && post.image && post.title))
+      if (!(post.author && post.content && post.image && post.title && post.locale))
         throw new Error(ERROR_MESSAGES.INCORRECT_EMAIL);
 
       const dbPost = await insertPost(post).catch((err: any) => {
         if (err?.code === 11000) throw new Error(ERROR_MESSAGES.DUPLICATE);
 
         console.log("Insert Post:", err.message);
-
         throw new Error(ERROR_MESSAGES.INCORRECT_POST_INPUTS);
       });
 

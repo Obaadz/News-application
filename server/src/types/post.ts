@@ -7,6 +7,7 @@ export type Post = {
   content: string;
   featured: boolean;
   createAt: Date;
+  locale: "en" | "ar";
 };
 
 export interface IPostDocument extends Document, Post {}

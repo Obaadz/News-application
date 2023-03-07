@@ -5,5 +5,6 @@ export type Post = {
   image: string;
   content: string;
   featured?: boolean;
+  locale: string;
   createAt: Date;
 };

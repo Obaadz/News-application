@@ -7,6 +7,7 @@ export const postSchema = new Schema({
   image: { type: String, required: true },
   content: { type: String, required: true },
   featured: { type: Boolean, default: false },
+  locale: { type: String, required: true },
   createAt: { type: Date, default: Date.now },
 });
 

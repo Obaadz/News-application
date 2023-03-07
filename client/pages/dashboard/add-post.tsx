@@ -24,6 +24,9 @@ const texts = {
     featured: "Featured",
     author: "Author",
     required: "This field is required",
+    locale: "Post language",
+    en: "English",
+    ar: "Arabic",
   },
   ar: {
     dashboard_title: "اضافة خبر جديد",
@@ -33,6 +36,9 @@ const texts = {
     featured: "مميز",
     author: "الكاتب",
     required: "هذا الحقل مطلوب",
+    locale: "لغة الخبر",
+    en: "الانجليزية",
+    ar: "العربية",
   },
 };
 
@@ -100,6 +106,24 @@ const News: NextPage<Props> = () => {
               })}
             />
             {errors.title && <span className="text-red-500">{errors.title.message}</span>}
+          </div>
+          <div className="flex w-full flex-col items-center">
+            <label htmlFor="locale" className="">
+              {locale ? texts[locale].locale : "لغة الخبر"}
+            </label>
+            <select
+              className="h-10 w-full rounded-md border-2 border-[#29668c] px-2"
+              id="locale"
+              {...register("locale", {
+                required: locale ? texts[locale].required : "هذا الحقل مطلوب",
+              })}
+            >
+              <option value="ar">{locale ? texts[locale].ar : "العربيه"}</option>
+              <option value="en">{locale ? texts[locale].en : "الانجليزيه"}</option>
+            </select>
+            {errors.locale && (
+              <span className="text-red-500">{errors.locale.message}</span>
+            )}
           </div>
           <div className="mt-5 flex w-full flex-col items-center">
             <label htmlFor="content" className="">
