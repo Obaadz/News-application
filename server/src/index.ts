@@ -17,7 +17,9 @@ const bodyParser = {
 
 app.use(bodyParser.urlencoded);
 app.use(bodyParser.json);
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({ origin: "https://news-application-client.vercel.app", credentials: true })
+);
 
 app.use(v1Routes);
 
