@@ -17,7 +17,12 @@ const bodyParser = {
 
 app.use(bodyParser.urlencoded);
 app.use(bodyParser.json);
-app.use(cors({ origin: "*", credentials: true }));
+app.use(
+  cors({
+    origin: process.env.FRONT_URL || "*",
+    credentials: true,
+  })
+);
 
 app.use(v1Routes);
 

@@ -4,6 +4,7 @@ declare global {
       DB_URI: string;
       SECRET: string;
       PORT?: string;
+      FRONT_URL: string;
     }
   }
 }
