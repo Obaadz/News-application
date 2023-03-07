@@ -5,6 +5,7 @@ declare global {
       SECRET: string;
       PORT?: string;
       FRONT_URL: string;
+      PAGE_SIZE: string;
     }
   }
 }

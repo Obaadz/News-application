@@ -3,6 +3,7 @@ import type { NextPage, NextPageContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import { texts } from "./index";
 import DashboardHomeLayout from "../../layouts/dashboard";
 import DashboardLayout from "../../layouts/dashboard/DashboardLayout";
 import { createPost } from "../../services/post";
@@ -14,33 +15,6 @@ import { getLocale } from "../../utils/locale";
 import { BACKEND_URL } from "../_app";
 
 type Props = {};
-
-const texts = {
-  en: {
-    dashboard_title: "Add New Post",
-    title: "Title",
-    content: "Content",
-    image: "Image",
-    featured: "Featured",
-    author: "Author",
-    required: "This field is required",
-    locale: "Post language",
-    en: "English",
-    ar: "Arabic",
-  },
-  ar: {
-    dashboard_title: "اضافة خبر جديد",
-    title: "العنوان",
-    content: "المحتوى",
-    image: "الصورة",
-    featured: "مميز",
-    author: "الكاتب",
-    required: "هذا الحقل مطلوب",
-    locale: "لغة الخبر",
-    en: "الانجليزية",
-    ar: "العربية",
-  },
-};
 
 const News: NextPage<Props> = () => {
   const router = useRouter();

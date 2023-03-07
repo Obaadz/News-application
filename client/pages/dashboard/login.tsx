@@ -3,6 +3,7 @@ import type { NextPage, NextPageContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import { texts } from "./index";
 import DashboardLayout from "../../layouts/dashboard/DashboardLayout";
 import { getUserById, loginUser } from "../../services/user";
 import { ERROR_MESSAGES } from "../../types/enums";
@@ -13,21 +14,6 @@ import { getLocale } from "../../utils/locale";
 import saveTokenToCookies from "../../utils/saveTokenToCookies";
 
 type Props = {};
-
-const texts = {
-  en: {
-    login_title: "Login",
-    email: "Email",
-    password: "Password",
-    required: "This field is required",
-  },
-  ar: {
-    login_title: "تسجيل الدخول",
-    email: "البريد الالكتروني",
-    password: "كلمة المرور",
-    required: "هذا الحقل مطلوب",
-  },
-};
 
 const Login: NextPage<Props> = () => {
   const router = useRouter();

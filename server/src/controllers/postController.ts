@@ -1,15 +1,35 @@
 import { Request, Response } from "express";
+import { PAGE_SIZE } from "../index";
 import { JwtAuthExpressRequest } from "../middleware/jwtAuth";
-import { findPosts, insertPost, updatePost } from "../services/post";
+import {
+  findPost,
+  findPosts,
+  getTotalPages,
+  insertPost,
+  updatePost,
+} from "../services/post";
 import { ERROR_MESSAGES } from "../types/enums";
 import { Post } from "../types/post";
 import { UserFromToken } from "../types/user";
 
 export default class PostController {
   static async get(req: Request, res: Response) {
-    const posts = await findPosts({});
+    const page = Number(req.query.page);
 
-    res.status(201).send(posts);
+    const posts = await findPosts({}, undefined, {
+      skip: page ? (page - 1) * PAGE_SIZE : 0,
+      limit: PAGE_SIZE,
+    });
+
+    res.status(201).send({ posts, totalPages: await getTotalPages() });
+  }
+
+  static async getOne(req: Request, res: Response) {
+    const postId = req.params.id;
+
+    const post = await findPost({ _id: postId });
+
+    res.status(201).send({ post });
   }
 
   static async create(request: JwtAuthExpressRequest<UserFromToken>, response: Response) {

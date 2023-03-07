@@ -1,7 +1,8 @@
 import { ERROR_MESSAGES } from "../types/enums";
 import type { IPostDocument, Post } from "../types/post";
 import PostModel from "../models/post";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
+import { PAGE_SIZE } from "../index";
 
 export async function findPost(
   query: FilterQuery<IPostDocument>,
@@ -18,11 +19,14 @@ export async function findPost(
 
 export async function findPosts(
   query: FilterQuery<IPostDocument>,
-  selectedItems?: string | string[]
+  selectedItems?: string | string[],
+  queryOptions?: QueryOptions<IPostDocument>
 ) {
-  const dbPost: IPostDocument[] = await PostModel.find(query).select(
-    selectedItems ? selectedItems : undefined
-  );
+  const dbPost: IPostDocument[] = await PostModel.find(
+    query,
+    undefined,
+    queryOptions
+  ).select(selectedItems ? selectedItems : undefined);
 
   if (!dbPost) throw new Error(ERROR_MESSAGES.ERROR_ON_FINDING_POST);
 
@@ -48,4 +52,10 @@ export async function updatePost(
 
 export async function deletePost(query: FilterQuery<IPostDocument>) {
   await PostModel.updateOne(query, { $unset: { title: 1 } });
+}
+
+export async function getTotalPages() {
+  const count = await PostModel.countDocuments();
+
+  return Math.ceil(count / PAGE_SIZE);
 }

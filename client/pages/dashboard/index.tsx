@@ -10,6 +10,39 @@ import { getLocale } from "../../utils/locale";
 
 type Props = {};
 
+export const texts = {
+  en: {
+    login_title: "Login",
+    email: "Email",
+    password: "Password",
+    required: "This field is required",
+    dashboard_title: "Add New Post",
+    title: "Title",
+    content: "Content",
+    image: "Image",
+    featured: "Featured",
+    author: "Author",
+    locale: "Post language",
+    en: "English",
+    ar: "Arabic",
+  },
+  ar: {
+    login_title: "تسجيل الدخول",
+    email: "البريد الالكتروني",
+    password: "كلمة المرور",
+    required: "هذا الحقل مطلوب",
+    dashboard_title: "اضافة خبر جديد",
+    title: "العنوان",
+    content: "المحتوى",
+    image: "الصورة",
+    featured: "مميز",
+    author: "الكاتب",
+    locale: "لغة الخبر",
+    en: "الانجليزية",
+    ar: "العربية",
+  },
+};
+
 const Dashboard: NextPage<Props> = () => {
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
