@@ -51,7 +51,7 @@ export async function updatePost(
 }
 
 export async function deletePost(query: FilterQuery<IPostDocument>) {
-  await PostModel.updateOne(query, { $unset: { title: 1 } });
+  await PostModel.deleteOne(query, { $unset: { title: 1 } });
 }
 
 export async function getTotalPages(locale: "en" | "ar") {

@@ -25,8 +25,8 @@ export async function createPost(post: Partial<Post>) {
   return data;
 }
 
-export async function getPost(post: Partial<Post>) {
-  const token = getTokenFromCookies();
+export async function getPost(post: Partial<Post>, token?: string) {
+  if (!token) token = getTokenFromCookies();
 
   if (!token) throw new Error(ERROR_MESSAGES.INCORRECT_TOKEN);
 
@@ -62,6 +62,23 @@ export async function updatePost(post: Partial<Post>) {
     {
       post,
     },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return data;
+}
+
+export async function deletePost(post: Partial<Post>) {
+  const token = getTokenFromCookies();
+
+  if (!token) throw new Error(ERROR_MESSAGES.INCORRECT_TOKEN);
+
+  const { data }: AxiosResponse = await axios.delete(
+    `${BACKEND_URL}/v1/posts/${post._id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

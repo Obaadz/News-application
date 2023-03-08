@@ -32,7 +32,7 @@ const DashboardHomeLayout: NextPage<Props> = ({ children }) => {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen w-40 bg-[#161744] text-center">
+      <div className=" min-h-screen min-w-[10rem] bg-[#161744] text-center">
         <h1 className="select-none pt-5 text-xl text-white">
           {locale ? texts[locale].dashboard : "لوحة التحكم"}
         </h1>
