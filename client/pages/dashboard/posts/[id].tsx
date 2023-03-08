@@ -28,21 +28,6 @@ const News: NextPage<Props> = ({ post }) => {
     clearErrors,
   } = useForm<Partial<Post & { _id?: string }>>();
 
-  const handleFileUpload = async (event: any) => {
-    const file = event.target?.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64Data = reader.result;
-      register("image", {
-        value: base64Data as string,
-        required: locale ? texts[locale].required : "هذا الحقل مطلوب",
-      });
-    };
-    reader.readAsDataURL(file);
-  };
-
   return (
     <DashboardHomeLayout>
       <div className="grow self-center py-3 text-center">
@@ -50,6 +35,11 @@ const News: NextPage<Props> = ({ post }) => {
           className=" mx-auto flex w-1/2 flex-col items-center justify-center"
           onSubmit={handleSubmit(async (postForm) => {
             try {
+              if (postForm.image && postForm.image[0])
+                postForm.image = (await imageToBase64(
+                  (postForm as any).image[0]
+                )) as string;
+
               if (!postForm.image) postForm.image = post.image;
               console.log(postForm);
 
@@ -120,8 +110,10 @@ const News: NextPage<Props> = ({ post }) => {
             <input
               type="file"
               id="image"
+              {...register("image", {
+                required: locale ? texts[locale].required : "هذا الحقل مطلوب",
+              })}
               className="h-10 w-full rounded-md border-2 border-[#29668c] px-2"
-              onChange={handleFileUpload}
             />
             {errors.image && <span className="text-red-500">{errors.image.message}</span>}
           </div>
@@ -218,3 +210,12 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     };
   }
 };
+
+async function imageToBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
