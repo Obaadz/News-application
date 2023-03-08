@@ -15,13 +15,14 @@ import { UserFromToken } from "../types/user";
 export default class PostController {
   static async get(req: Request, res: Response) {
     const page = Number(req.query.page);
+    const locale = req.query.locale as "en" | "ar";
 
-    const posts = await findPosts({}, undefined, {
+    const posts = await findPosts({ locale }, undefined, {
       skip: page ? (page - 1) * PAGE_SIZE : 0,
       limit: PAGE_SIZE,
     });
 
-    res.status(201).send({ posts, totalPages: await getTotalPages() });
+    res.status(201).send({ posts, totalPages: await getTotalPages(locale) });
   }
 
   static async getOne(req: Request, res: Response) {

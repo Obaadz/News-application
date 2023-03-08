@@ -42,13 +42,11 @@ export async function getPost(post: Partial<Post>) {
   return data;
 }
 
-export async function getPosts(page?: number) {
-  const token = getTokenFromCookies();
-
-  if (!token) throw new Error(ERROR_MESSAGES.INCORRECT_TOKEN);
-
+export async function getPosts({ locale, page }: { locale: "en" | "ar"; page?: number }) {
   const { data }: AxiosResponse<{ posts: Post[] }> = await axios.get(
-    `${BACKEND_URL}/v1/${page ? `posts?page=${page}` : "posts"}`
+    `${BACKEND_URL}/v1/${
+      page ? `posts?locale=${locale}&page=${page}` : `posts?locale=${locale}`
+    }`
   );
 
   return data;

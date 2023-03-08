@@ -3,12 +3,16 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import DashboardHomeLayout from "../../layouts/dashboard";
 import DashboardLayout from "../../layouts/dashboard/DashboardLayout";
+import { getPosts } from "../../services/post";
 import { getUserById } from "../../services/user";
 import { ERROR_MESSAGES } from "../../types/enums";
+import { Post } from "../../types/post";
 import getCookiesObjectFromString from "../../utils/getCookiesObjectFromString";
 import { getLocale } from "../../utils/locale";
 
-type Props = {};
+type Props = {
+  initialPosts: Post[];
+};
 
 export const texts = {
   en: {
@@ -43,11 +47,13 @@ export const texts = {
   },
 };
 
-const Dashboard: NextPage<Props> = () => {
+const Dashboard: NextPage<Props> = ({ initialPosts }) => {
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
 
-  return <DashboardHomeLayout>x</DashboardHomeLayout>;
+  return (
+    <DashboardHomeLayout>{initialPosts && initialPosts[0].content}</DashboardHomeLayout>
+  );
 };
 
 export default Dashboard;
@@ -67,8 +73,14 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     });
 
     if (!dbUser) throw new Error(ERROR_MESSAGES.INCORRECT_TOKEN);
+    const { posts: initialPosts }: any = await getPosts({
+      locale: (ctx.locale as "en" | "ar") || "ar",
+      page: 1,
+    }).catch((err: any) => {
+      console.log(err);
+    });
 
-    return { props: { isLoggedIn: true, isAdmin: true, dbUser } };
+    return { props: { isLoggedIn: true, isAdmin: true, dbUser, initialPosts } };
   } catch (err: any) {
     return {
       props: {},

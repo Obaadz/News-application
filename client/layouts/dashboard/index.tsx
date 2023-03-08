@@ -40,9 +40,9 @@ const DashboardHomeLayout: NextPage<Props> = ({ children }) => {
         <ul className="mt-3">
           <li>
             <Link
-              href="/dashboard/news"
+              href="/dashboard"
               className={`block py-3 text-lg text-[#bcbcbc] transition-colors duration-300 hover:text-[#ededed] ${
-                router.pathname === "/dashboard/news" ? "text-[#ededed]" : ""
+                router.pathname === "/dashboard" ? "text-[#ededed]" : ""
               }`}
             >
               {locale ? texts[locale].news : "عرض الاخبار"}
