@@ -16,11 +16,12 @@ import { UserFromToken } from "../types/user";
 export default class PostController {
   static async get(req: Request, res: Response) {
     const page = Number(req.query.page);
+    const limit = Number(req.query.limit);
     const locale = req.query.locale as "en" | "ar";
 
     const posts = await findPosts({ locale }, undefined, {
       skip: page ? (page - 1) * PAGE_SIZE : 0,
-      limit: PAGE_SIZE,
+      limit: limit ? limit : PAGE_SIZE,
       sort: { createAt: -1 },
     });
 

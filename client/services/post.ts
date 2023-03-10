@@ -42,11 +42,23 @@ export async function getPost(post: Partial<Post>, token?: string) {
   return data;
 }
 
-export async function getPosts({ locale, page }: { locale: "en" | "ar"; page?: number }) {
+export async function getPosts({
+  locale,
+  page,
+  limit,
+}: {
+  locale: "en" | "ar";
+  page?: number;
+  limit?: number;
+}) {
+  let query = `?locale=${locale}`;
+
+  if (page) query += `&page=${page}`;
+
+  if (limit) query += `&limit=${limit}`;
+
   const { data }: AxiosResponse<{ posts: Post[] }> = await axios.get(
-    `${BACKEND_URL}/v1/${
-      page ? `posts?locale=${locale}&page=${page}` : `posts?locale=${locale}`
-    }`
+    `${BACKEND_URL}/v1/posts${query}`
   );
 
   return data;

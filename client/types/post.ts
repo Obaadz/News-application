@@ -6,5 +6,5 @@ export type Post = {
   content: string;
   featured?: boolean;
   locale: string;
-  createAt: Date;
+  createAt: string;
 };
