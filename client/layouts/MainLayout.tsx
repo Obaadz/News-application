@@ -13,7 +13,7 @@ const MainLayout: NextPage<Props> = ({ children }) => {
         <meta name="description" content="موقع اخباري لعرض الاخبار" />
         <link rel="icon" href="/images/favicon.png" />
       </Head>
-      <div className="h-max bg-[#ffffff] ltr:font-barlow rtl:font-cairo">{children}</div>
+      <div className="h-max bg-[#000] ltr:font-barlow rtl:font-cairo">{children}</div>
     </>
   );
 };
