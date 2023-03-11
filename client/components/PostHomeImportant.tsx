@@ -4,7 +4,7 @@ import { Post } from "../types/post";
 import Image from "next/image";
 import { texts } from "../pages";
 
-const PostHomeLanding: FC<{ post: Post }> = ({ post }) => {
+const PostHomeImportant: FC<{ post: Post }> = ({ post }) => {
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
 
@@ -39,4 +39,4 @@ const PostHomeLanding: FC<{ post: Post }> = ({ post }) => {
   );
 };
 
-export default PostHomeLanding;
+export default PostHomeImportant;

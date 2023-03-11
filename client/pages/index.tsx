@@ -4,13 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import PostHomeLanding from "../components/PostHomeLanding";
 import MainLayout from "../layouts/MainLayout";
 import { getPosts } from "../services/post";
 import { Post } from "../types/post";
-
+import { Autoplay, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+// import "swiper/css/navigation";
 type Props = {
   initialPosts: Post[];
+  initialImportantPosts: Post[];
+  initialLastPosts: Post[];
 };
 
 export const texts = {
@@ -25,6 +31,8 @@ export const texts = {
     enterteinment: "Enterteinment",
     lastNews: "Last News",
     content: "Content",
+    whoWe: "Who We Are",
+    important: "Important news",
   },
   ar: {
     author: "الكاتب",
@@ -37,11 +45,15 @@ export const texts = {
     enterteinment: "الترفيه",
     lastNews: "اخر الاخبار",
     content: "المحتوى",
+    whoWe: "من نحن",
+    important: "اخبار عاجله",
   },
 };
 
 const Home: NextPage<Props> = ({ initialPosts }) => {
   const [headingPosts, setHeadingPosts] = useState(initialPosts);
+  const [importantPosts, setImportantPosts] = useState(initialPosts);
+  const [lastPosts, setLastPosts] = useState(initialPosts);
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
 
@@ -70,6 +82,9 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
             <Link href="/">{texts[locale].home}</Link>
           </span>
           <span className="text-md select-none font-semibold tracking-tight sm:text-lg md:text-xl">
+            <Link href="/#who-we">{texts[locale].whoWe}</Link>
+          </span>
+          {/* <span className="text-md select-none font-semibold tracking-tight sm:text-lg md:text-xl">
             <Link href="/categories/mobiles">{texts[locale].mobiles}</Link>
           </span>
           <span className="text-md select-none font-semibold tracking-tight sm:text-lg md:text-xl">
@@ -77,7 +92,7 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
           </span>
           <span className="text-md select-none font-semibold tracking-tight sm:text-lg md:text-xl">
             <Link href="/categories/enterteinment">{texts[locale].enterteinment}</Link>
-          </span>
+          </span> */}
         </div>
         <div className="mx-auto flex flex-shrink-0 items-center justify-end gap-2 text-black sm:mx-0">
           <span className="sm:text-md select-none text-sm font-semibold tracking-tight">
@@ -95,7 +110,7 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
       <div className="-z-20 h-screen w-full bg-dvd bg-cover"></div>
       <div className="absolute top-0 z-0 h-screen w-full bg-gray-900 opacity-30"></div>
       <main>
-        <div className="relative -top-96">
+        <div className="relative -mt-96">
           <div className="container mx-auto px-6 py-8">
             <h3 className="text-2xl font-medium text-gray-700">
               {texts[locale].lastNews} :
@@ -109,6 +124,75 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
             </div>
           </div>
         </div>
+        <section className="mt-4">
+          <div className="container mx-auto px-6 py-8">
+            <div className="mt-4">
+              <div className="flex flex-wrap justify-start gap-6">
+                <div className="w-2/5">
+                  <h3 className="mb-4 text-2xl font-medium text-gray-700">
+                    {texts[locale].important} :
+                  </h3>
+                  <Swiper
+                    spaceBetween={30}
+                    centeredSlides={true}
+                    autoplay={{
+                      delay: 2500,
+                      disableOnInteraction: false,
+                    }}
+                    pagination={{
+                      clickable: true,
+                    }}
+                    modules={[Autoplay, Pagination]}
+                    className="!mx-0 w-full"
+                  >
+                    <SwiperSlide>
+                      <Link href={`/posts/${importantPosts[0]._id}`}>
+                        <div className="relative">
+                          <Image
+                            src={importantPosts[0].image}
+                            width={600}
+                            height={600}
+                            alt={importantPosts[0].title}
+                          />
+                          <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold">
+                            {importantPosts[0].title}
+                          </h4>
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                    {/* <SwiperSlide>Slide 2</SwiperSlide> */}
+                    {/* <SwiperSlide>Slide 3</SwiperSlide> */}
+                  </Swiper>
+                </div>
+                <div className="grow">
+                  <h3 className="mb-4 text-2xl font-medium text-gray-700">
+                    {texts[locale].lastNews} :
+                  </h3>
+                  <div className="flex flex-col gap-5">
+                    {lastPosts.map((post) => (
+                      <div key={post._id} className="flex max-w-2xl gap-3">
+                        <Image
+                          src={post.image}
+                          width={250}
+                          height={250}
+                          alt={post.title}
+                        />
+                        <Link href={`/posts/${post._id}`}>
+                          <h4 className="font-semibold">{post.title}</h4>
+                          <p className="mt-3">
+                            {post.content.length > 100
+                              ? post.content.slice(0, 100) + "..."
+                              : post.content}
+                          </p>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </MainLayout>
   );
