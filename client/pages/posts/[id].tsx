@@ -5,19 +5,22 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import PostHomeLanding from "../components/PostHomeLanding";
-import MainLayout from "../layouts/MainLayout";
-import { getPosts } from "../services/post";
-import { Post } from "../types/post";
 import { Autoplay, Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
+import PostHomeLanding from "../../components/PostHomeLanding";
+import MainLayout from "../../layouts/MainLayout";
+import { getPosts, getPost } from "../../services/post";
+import { getUserById } from "../../services/user";
+import { ERROR_MESSAGES } from "../../types/enums";
+import { Post } from "../../types/post";
+import getCookiesObjectFromString from "../../utils/getCookiesObjectFromString";
 // import "swiper/css/navigation";
 type Props = {
   initialPosts: Post[];
-  initialImportantPosts: Post[];
   initialLastPosts: Post[];
   totalPages: number;
+  neededPost: Post;
 };
 
 export const texts = {
@@ -51,10 +54,8 @@ export const texts = {
   },
 };
 
-const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages }) => {
-  const [headingPosts, setHeadingPosts] = useState(initialPosts.slice(1, 4));
-  const [importantPosts, setImportantPosts] = useState(initialImportantPosts);
-  const [lastPosts, setLastPosts] = useState(initialPosts.slice(4));
+const PostPage: NextPage<Props> = ({ initialPosts, totalPages, neededPost }) => {
+  const [lastPosts, setLastPosts] = useState(initialPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
@@ -65,8 +66,6 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages
       page: 1,
       featured: 2,
     });
-
-    setHeadingPosts(posts.slice(1, 4));
   };
 
   const handleLastPosts = async (page: number) => {
@@ -75,6 +74,7 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages
       page,
       featured: 2,
     });
+
     setLastPosts(page > 1 ? posts : initialPosts.slice(4));
   };
 
@@ -83,7 +83,7 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages
   }, [locale]);
   return (
     <MainLayout>
-      <nav className="absolute z-20 flex w-full flex-wrap items-center justify-between gap-3 p-6">
+      <nav className="z-20 flex w-full flex-wrap items-center justify-between gap-3 p-6">
         <div className="mx-auto flex flex-shrink-0 items-center text-white sm:mx-0">
           <span className="select-none text-4xl font-semibold tracking-tight">
             <Link href="/">{texts[locale].siteName}</Link>
@@ -119,99 +119,35 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages
           </span>
         </div>
       </nav>
-      <div
-        className="-z-20 h-screen w-full scale-[.93] bg-black bg-cover bg-center bg-no-repeat blur-md"
-        style={{ backgroundImage: `url(${initialPosts[0].image})` }}
-      ></div>
-      <div className="absolute top-0 z-0 h-screen w-full rounded-sm bg-black opacity-80"></div>
       <main>
-        <div className="relative -mt-96 lg:-mt-[26rem]">
-          <div className="container mx-auto px-6 py-8">
-            {/* <h3 className="text-2xl font-medium text-white">
-              {texts[locale].lastNews} :
-            </h3> */}
-            <div className="mt-4">
-              <div className="flex flex-wrap justify-center gap-3 lg:gap-0">
-                {headingPosts.map((post) => (
-                  <PostHomeLanding key={post._id} post={post} />
-                ))}
+        <section>
+          <div className="container mx-auto px-6 py-4">
+            <Image
+              className="mx-auto mb-6 rounded-sm"
+              src={neededPost.image}
+              width={550}
+              height={350}
+              alt={neededPost.title}
+            />
+            <div className="lg:w-2/3">
+              <h1 className="mb-4 select-none text-3xl font-medium text-white">
+                {neededPost.title}
+              </h1>
+              <p className="text-white">{neededPost.content}</p>
+              <div className="mt-3 text-white">
+                <span className="text-red-900">{neededPost.author}</span> -{" "}
+                <span className="text-red-900">
+                  {new Date(neededPost.createAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
-        </div>
-        <section className="mt-20 lg:mt-28">
+        </section>
+
+        <section className="mt-4 lg:mt-8">
           <div className="container mx-auto px-6 py-8">
             <div className="mt-4">
               <div className="flex flex-wrap justify-start gap-6">
-                {importantPosts.length > 0 && (
-                  <div className="w-2/5">
-                    <h3 className="mb-4 select-none text-2xl font-medium text-white">
-                      {texts[locale].important}
-                    </h3>
-                    <Swiper
-                      spaceBetween={30}
-                      centeredSlides={true}
-                      autoplay={{
-                        delay: 2500,
-                        disableOnInteraction: false,
-                      }}
-                      pagination={{
-                        clickable: true,
-                      }}
-                      modules={[Autoplay, Pagination]}
-                      className="!mx-0 w-full"
-                    >
-                      <SwiperSlide>
-                        <Link href={`/posts/${importantPosts[0]._id}`}>
-                          <div className="relative">
-                            <Image
-                              src={importantPosts[0].image}
-                              width={600}
-                              height={600}
-                              alt={importantPosts[0].title}
-                              className="blur-sm"
-                            />
-                            <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
-                              {importantPosts[0].title}
-                            </h4>
-                          </div>
-                        </Link>
-                      </SwiperSlide>
-                      <SwiperSlide>
-                        <Link href={`/posts/${importantPosts[1]._id}`}>
-                          <div className="relative">
-                            <Image
-                              src={importantPosts[1].image}
-                              width={600}
-                              height={600}
-                              alt={importantPosts[1].title}
-                              className="blur-sm"
-                            />
-                            <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
-                              {importantPosts[1].title}
-                            </h4>
-                          </div>
-                        </Link>
-                      </SwiperSlide>
-                      <SwiperSlide>
-                        <Link href={`/posts/${importantPosts[2]._id}`}>
-                          <div className="relative">
-                            <Image
-                              src={importantPosts[2].image}
-                              width={600}
-                              height={600}
-                              alt={importantPosts[2].title}
-                              className="blur-sm"
-                            />
-                            <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
-                              {importantPosts[2].title}
-                            </h4>
-                          </div>
-                        </Link>
-                      </SwiperSlide>
-                    </Swiper>
-                  </div>
-                )}
                 <div className="grow text-white">
                   <h3 className="mb-4 select-none text-2xl font-medium text-white">
                     {texts[locale].lastNews}
@@ -260,10 +196,14 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages
   );
 };
 
-export default Home;
+export default PostPage;
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
   try {
+    const { post: neededPost } = await getPost({
+      _id: ctx.query.id as string,
+    });
+
     const { posts: initialPosts, totalPages }: any = await getPosts({
       locale: (ctx.locale as "en" | "ar") || "ar",
       page: 1,
@@ -271,15 +211,8 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     }).catch((err: any) => {
       console.log(err);
     });
-    const { posts: initialImportantPosts }: any = await getPosts({
-      locale: (ctx.locale as "en" | "ar") || "ar",
-      page: 1,
-      featured: 1,
-    }).catch((err: any) => {
-      console.log(err);
-    });
 
-    return { props: { initialPosts, initialImportantPosts, totalPages } };
+    return { props: { initialPosts, totalPages, neededPost } };
   } catch (err: any) {
     return {
       props: {},

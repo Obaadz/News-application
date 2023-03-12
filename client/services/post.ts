@@ -26,17 +26,8 @@ export async function createPost(post: Partial<Post>) {
 }
 
 export async function getPost(post: Partial<Post>, token?: string) {
-  if (!token) token = getTokenFromCookies();
-
-  if (!token) throw new Error(ERROR_MESSAGES.INCORRECT_TOKEN);
-
   const { data }: AxiosResponse<{ post: Post }> = await axios.get(
-    `${BACKEND_URL}/v1/posts/${post._id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    `${BACKEND_URL}/v1/posts/${post._id}`
   );
 
   return data;

@@ -11,7 +11,7 @@ const PostHomeLanding: FC<{ post: Post }> = ({ post }) => {
 
   return (
     <div className="flex w-full flex-col items-center px-6 sm:w-1/2 md:w-2/5 lg:w-1/4">
-      <Link href={post._id}>
+      <Link href={`/posts/${post._id}`}>
         <Image
           src={post.image}
           width={350}
@@ -21,7 +21,7 @@ const PostHomeLanding: FC<{ post: Post }> = ({ post }) => {
         />
       </Link>
       <div className="flex items-center justify-between">
-        <Link href={post._id}>
+        <Link href={`/posts/${post._id}`}>
           <p className="font-bold text-white">
             {post.content.length > 50 ? post.content.slice(0, 50) + "..." : post.content}
           </p>
@@ -33,7 +33,7 @@ const PostHomeLanding: FC<{ post: Post }> = ({ post }) => {
         </span>
       </div> */}
       <div className="mt-5 flex items-center">
-        <Link href={post._id}>
+        <Link href={`/posts/${post._id}`}>
           <span className="font-bold text-red-900">
             {post.author}
             {/* {new Date(post.createAt).toLocaleDateString()} */}
