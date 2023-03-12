@@ -32,7 +32,7 @@ export const texts = {
     lastNews: "Last News",
     content: "Content",
     whoWe: "Who We Are",
-    important: "Important news",
+    important: "Exclusive news",
   },
   ar: {
     author: "الكاتب",
@@ -46,14 +46,14 @@ export const texts = {
     lastNews: "اخر الاخبار",
     content: "المحتوى",
     whoWe: "من نحن",
-    important: "اخبار عاجله",
+    important: "اخبار حصريه",
   },
 };
 
-const Home: NextPage<Props> = ({ initialPosts }) => {
+const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts }) => {
   const [headingPosts, setHeadingPosts] = useState(initialPosts.slice(1, 4));
-  const [importantPosts, setImportantPosts] = useState(initialPosts.slice(1));
-  const [lastPosts, setLastPosts] = useState(initialPosts.slice(1));
+  const [importantPosts, setImportantPosts] = useState(initialImportantPosts);
+  const [lastPosts, setLastPosts] = useState(initialPosts.slice(4));
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
 
@@ -61,8 +61,9 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
     const { posts } = await getPosts({
       locale,
       page: 1,
+      featured: 2,
     });
-    console.log("fy ayh,", posts);
+
     setHeadingPosts(posts.slice(1, 4));
   };
   useEffect(() => {
@@ -112,7 +113,7 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
       ></div>
       <div className="absolute top-0 z-0 h-screen w-full rounded-sm bg-black opacity-80"></div>
       <main>
-        <div className="relative -mt-96 lg:-mt-[30rem]">
+        <div className="relative -mt-96 lg:-mt-[26rem]">
           <div className="container mx-auto px-6 py-8">
             {/* <h3 className="text-2xl font-medium text-white">
               {texts[locale].lastNews} :
@@ -130,57 +131,75 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
           <div className="container mx-auto px-6 py-8">
             <div className="mt-4">
               <div className="flex flex-wrap justify-start gap-6">
-                <div className="w-2/5">
-                  <h3 className="mb-4 text-2xl font-medium text-white">
-                    {texts[locale].important} :
-                  </h3>
-                  <Swiper
-                    spaceBetween={30}
-                    centeredSlides={true}
-                    autoplay={{
-                      delay: 2500,
-                      disableOnInteraction: false,
-                    }}
-                    pagination={{
-                      clickable: true,
-                    }}
-                    modules={[Autoplay, Pagination]}
-                    className="!mx-0 w-full"
-                  >
-                    <SwiperSlide>
-                      <Link href={`/posts/${importantPosts[0]._id}`}>
-                        <div className="relative">
-                          <Image
-                            src={importantPosts[0].image}
-                            width={600}
-                            height={600}
-                            alt={importantPosts[0].title}
-                            className="blur-sm"
-                          />
-                          <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
-                            {importantPosts[0].title}
-                          </h4>
-                        </div>
-                      </Link>
-                    </SwiperSlide>
-                    <SwiperSlide>
-                      <Link href={`/posts/${importantPosts[1]._id}`}>
-                        <div className="relative">
-                          <Image
-                            src={importantPosts[1].image}
-                            width={600}
-                            height={600}
-                            alt={importantPosts[1].title}
-                            className="blur-sm"
-                          />
-                          <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
-                            {importantPosts[1].title}
-                          </h4>
-                        </div>
-                      </Link>
-                    </SwiperSlide>
-                  </Swiper>
-                </div>
+                {importantPosts.length > 0 && (
+                  <div className="w-2/5">
+                    <h3 className="mb-4 text-2xl font-medium text-white">
+                      {texts[locale].important} :
+                    </h3>
+                    <Swiper
+                      spaceBetween={30}
+                      centeredSlides={true}
+                      autoplay={{
+                        delay: 2500,
+                        disableOnInteraction: false,
+                      }}
+                      pagination={{
+                        clickable: true,
+                      }}
+                      modules={[Autoplay, Pagination]}
+                      className="!mx-0 w-full"
+                    >
+                      <SwiperSlide>
+                        <Link href={`/posts/${importantPosts[0]._id}`}>
+                          <div className="relative">
+                            <Image
+                              src={importantPosts[0].image}
+                              width={600}
+                              height={600}
+                              alt={importantPosts[0].title}
+                              className="blur-sm"
+                            />
+                            <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
+                              {importantPosts[0].title}
+                            </h4>
+                          </div>
+                        </Link>
+                      </SwiperSlide>
+                      <SwiperSlide>
+                        <Link href={`/posts/${importantPosts[1]._id}`}>
+                          <div className="relative">
+                            <Image
+                              src={importantPosts[1].image}
+                              width={600}
+                              height={600}
+                              alt={importantPosts[1].title}
+                              className="blur-sm"
+                            />
+                            <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
+                              {importantPosts[1].title}
+                            </h4>
+                          </div>
+                        </Link>
+                      </SwiperSlide>
+                      <SwiperSlide>
+                        <Link href={`/posts/${importantPosts[2]._id}`}>
+                          <div className="relative">
+                            <Image
+                              src={importantPosts[2].image}
+                              width={600}
+                              height={600}
+                              alt={importantPosts[2].title}
+                              className="blur-sm"
+                            />
+                            <h4 className="absolute top-0 px-3 pt-3 text-xl font-bold text-white">
+                              {importantPosts[2].title}
+                            </h4>
+                          </div>
+                        </Link>
+                      </SwiperSlide>
+                    </Swiper>
+                  </div>
+                )}
                 <div className="grow text-white">
                   <h3 className="mb-4 text-2xl font-medium text-white">
                     {texts[locale].lastNews} :
@@ -196,11 +215,7 @@ const Home: NextPage<Props> = ({ initialPosts }) => {
                         />
                         <Link href={`/posts/${post._id}`}>
                           <h4 className="font-semibold">{post.title}</h4>
-                          <p className="mt-3">
-                            {post.content.length > 100
-                              ? post.content.slice(0, 100) + "..."
-                              : post.content}
-                          </p>
+                          <p className="mt-3 text-red-900">{post.author}</p>
                         </Link>
                       </div>
                     ))}
@@ -222,11 +237,19 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     const { posts: initialPosts }: any = await getPosts({
       locale: (ctx.locale as "en" | "ar") || "ar",
       page: 1,
+      featured: 2,
+    }).catch((err: any) => {
+      console.log(err);
+    });
+    const { posts: initialImportantPosts }: any = await getPosts({
+      locale: (ctx.locale as "en" | "ar") || "ar",
+      page: 1,
+      featured: 1,
     }).catch((err: any) => {
       console.log(err);
     });
 
-    return { props: { initialPosts } };
+    return { props: { initialPosts, initialImportantPosts } };
   } catch (err: any) {
     return {
       props: {},

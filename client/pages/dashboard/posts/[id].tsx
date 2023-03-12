@@ -39,8 +39,10 @@ const News: NextPage<Props> = ({ post }) => {
                 postForm.image = (await imageToBase64(
                   (postForm as any).image[0]
                 )) as string;
-
-              if (!postForm.image) postForm.image = post.image;
+              else {
+                postForm.image = post.image;
+                console.log("WE");
+              }
               console.log(postForm);
 
               postForm._id = post._id;
@@ -111,7 +113,7 @@ const News: NextPage<Props> = ({ post }) => {
               type="file"
               id="image"
               {...register("image", {
-                required: locale ? texts[locale].required : "هذا الحقل مطلوب",
+                // required: locale ? texts[locale].required : "هذا الحقل مطلوب",
               })}
               className="h-10 w-full rounded-md border-2 border-[#29668c] px-2"
             />

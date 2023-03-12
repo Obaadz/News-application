@@ -13,17 +13,29 @@ import { ERROR_MESSAGES } from "../types/enums";
 import { Post } from "../types/post";
 import { UserFromToken } from "../types/user";
 
+let postsMap = new Map();
+
 export default class PostController {
   static async get(req: Request, res: Response) {
     const page = Number(req.query.page);
-    const limit = Number(req.query.limit);
+    const limit = Number(req.query.limit) || PAGE_SIZE;
     const locale = req.query.locale as "en" | "ar";
+    const featured = Number(req.query.featured);
+    let query: any = { locale };
+    const MAP_QUERY =
+      JSON.stringify(query) + JSON.stringify(page) + JSON.stringify(limit);
+    if (featured) query.featured = featured === 1 ? true : false;
 
-    const posts = await findPosts({ locale }, undefined, {
-      skip: page ? (page - 1) * PAGE_SIZE : 0,
-      limit: limit ? limit : PAGE_SIZE,
-      sort: { createAt: -1 },
-    });
+    let posts;
+    if (!postsMap.get(MAP_QUERY)) {
+      posts = await findPosts(query, undefined, {
+        skip: page ? (page - 1) * PAGE_SIZE : 0,
+        limit: limit ? limit : PAGE_SIZE,
+        sort: { createAt: -1 },
+      });
+
+      postsMap.set(MAP_QUERY, posts);
+    } else posts = postsMap.get(MAP_QUERY);
 
     res.status(201).send({ posts, totalPages: await getTotalPages(locale) });
   }
@@ -37,6 +49,7 @@ export default class PostController {
   }
 
   static async create(request: JwtAuthExpressRequest<UserFromToken>, response: Response) {
+    if (postsMap) postsMap.clear();
     try {
       const post: Post = request.body.post,
         user = request.auth;
@@ -59,6 +72,7 @@ export default class PostController {
   }
 
   static async update(request: JwtAuthExpressRequest<UserFromToken>, response: Response) {
+    if (postsMap) postsMap.clear();
     try {
       const post: Partial<Post & { _id: string }> = request.body.post,
         user = request.auth;
@@ -82,6 +96,7 @@ export default class PostController {
   }
 
   static async delete(request: JwtAuthExpressRequest<UserFromToken>, response: Response) {
+    if (postsMap) postsMap.clear();
     try {
       const postId = request.params.id,
         user = request.auth;

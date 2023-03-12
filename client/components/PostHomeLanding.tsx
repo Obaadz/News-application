@@ -34,7 +34,7 @@ const PostHomeLanding: FC<{ post: Post }> = ({ post }) => {
       </div> */}
       <div className="mt-5 flex items-center">
         <Link href={post._id}>
-          <span className="font-bold text-gray-400">
+          <span className="font-bold text-red-900">
             {post.author}
             {/* {new Date(post.createAt).toLocaleDateString()} */}
           </span>

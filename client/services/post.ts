@@ -46,16 +46,20 @@ export async function getPosts({
   locale,
   page,
   limit,
+  featured,
 }: {
   locale: "en" | "ar";
   page?: number;
   limit?: number;
+  featured?: number;
 }) {
   let query = `?locale=${locale}`;
 
   if (page) query += `&page=${page}`;
 
   if (limit) query += `&limit=${limit}`;
+
+  if (featured) query += `&featured=${featured}`;
 
   const { data }: AxiosResponse<{ posts: Post[] }> = await axios.get(
     `${BACKEND_URL}/v1/posts${query}`
