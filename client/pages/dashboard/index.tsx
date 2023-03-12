@@ -14,6 +14,7 @@ import { getLocale } from "../../utils/locale";
 
 type Props = {
   initialPosts: Post[];
+  totalPages: number;
 };
 
 export const texts = {
@@ -102,17 +103,42 @@ const PostComp: FC<{ post: Post; setPosts: any }> = ({ post, setPosts }) => {
   );
 };
 
-const Dashboard: NextPage<Props> = ({ initialPosts }) => {
+const Dashboard: NextPage<Props> = ({ initialPosts, totalPages }) => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState(initialPosts);
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
+  const handlePosts = async (page: number) => {
+    const { posts } = await getPosts({
+      locale,
+      page,
+      featured: 2,
+    });
 
+    setPosts(page > 1 ? posts : initialPosts);
+  };
   return (
     <DashboardHomeLayout>
       <div className="flex flex-col gap-2">
         {posts.map((post) => (
           <PostComp key={post._id} post={post} setPosts={setPosts} />
         ))}
+        <div className="flex gap-3 p-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <span
+              key={page}
+              className={`cursor-pointer bg-slate-600 px-1 text-xl ${
+                currentPage === page ? "text-red-900" : ""
+              }`}
+              onClick={async () => {
+                setCurrentPage(page);
+                await handlePosts(page);
+              }}
+            >
+              {page}
+            </span>
+          ))}
+        </div>
       </div>
     </DashboardHomeLayout>
   );
@@ -135,14 +161,16 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     });
 
     if (!dbUser) throw new Error(ERROR_MESSAGES.INCORRECT_TOKEN);
-    const { posts: initialPosts }: any = await getPosts({
+    const { posts: initialPosts, totalPages }: any = await getPosts({
       locale: (ctx.locale as "en" | "ar") || "ar",
       page: 1,
     }).catch((err: any) => {
       console.log(err);
     });
 
-    return { props: { isLoggedIn: true, isAdmin: true, dbUser, initialPosts } };
+    return {
+      props: { isLoggedIn: true, isAdmin: true, dbUser, initialPosts, totalPages },
+    };
   } catch (err: any) {
     return {
       props: {},

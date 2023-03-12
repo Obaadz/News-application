@@ -17,6 +17,7 @@ type Props = {
   initialPosts: Post[];
   initialImportantPosts: Post[];
   initialLastPosts: Post[];
+  totalPages: number;
 };
 
 export const texts = {
@@ -50,10 +51,11 @@ export const texts = {
   },
 };
 
-const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts }) => {
+const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts, totalPages }) => {
   const [headingPosts, setHeadingPosts] = useState(initialPosts.slice(1, 4));
   const [importantPosts, setImportantPosts] = useState(initialImportantPosts);
   const [lastPosts, setLastPosts] = useState(initialPosts.slice(4));
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   const locale: "en" | "ar" = router.locale as any;
 
@@ -66,6 +68,16 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts }) => {
 
     setHeadingPosts(posts.slice(1, 4));
   };
+
+  const handleLastPosts = async (page: number) => {
+    const { posts } = await getPosts({
+      locale,
+      page,
+      featured: 2,
+    });
+    setLastPosts(page > 1 ? posts : initialPosts.slice(4));
+  };
+
   useEffect(() => {
     handleClick();
   }, [locale]);
@@ -133,8 +145,8 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts }) => {
               <div className="flex flex-wrap justify-start gap-6">
                 {importantPosts.length > 0 && (
                   <div className="w-2/5">
-                    <h3 className="mb-4 text-2xl font-medium text-white">
-                      {texts[locale].important} :
+                    <h3 className="mb-4 select-none text-2xl font-medium text-white">
+                      {texts[locale].important}
                     </h3>
                     <Swiper
                       spaceBetween={30}
@@ -201,8 +213,8 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts }) => {
                   </div>
                 )}
                 <div className="grow text-white">
-                  <h3 className="mb-4 text-2xl font-medium text-white">
-                    {texts[locale].lastNews} :
+                  <h3 className="mb-4 select-none text-2xl font-medium text-white">
+                    {texts[locale].lastNews}
                   </h3>
                   <div className="flex flex-col gap-5">
                     {lastPosts.map((post) => (
@@ -213,12 +225,32 @@ const Home: NextPage<Props> = ({ initialPosts, initialImportantPosts }) => {
                           height={250}
                           alt={post.title}
                         />
-                        <Link href={`/posts/${post._id}`}>
-                          <h4 className="font-semibold">{post.title}</h4>
-                          <p className="mt-3 text-red-900">{post.author}</p>
-                        </Link>
+                        <div>
+                          <h4 className="font-semibold">
+                            <Link href={`/posts/${post._id}`}>{post.title}</Link>
+                          </h4>
+                          <p className="mt-3 text-red-900">
+                            <Link href={`/posts/${post._id}`}>{post.author}</Link>
+                          </p>
+                        </div>
                       </div>
                     ))}
+                    <div className="flex max-w-2xl justify-end gap-3">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <span
+                          key={page}
+                          className={`cursor-pointer bg-slate-600 px-1 text-xl ${
+                            currentPage === page ? "text-red-900" : ""
+                          }`}
+                          onClick={async () => {
+                            setCurrentPage(page);
+                            await handleLastPosts(page);
+                          }}
+                        >
+                          {page}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -234,7 +266,7 @@ export default Home;
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
   try {
-    const { posts: initialPosts }: any = await getPosts({
+    const { posts: initialPosts, totalPages }: any = await getPosts({
       locale: (ctx.locale as "en" | "ar") || "ar",
       page: 1,
       featured: 2,
@@ -249,7 +281,7 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
       console.log(err);
     });
 
-    return { props: { initialPosts, initialImportantPosts } };
+    return { props: { initialPosts, initialImportantPosts, totalPages } };
   } catch (err: any) {
     return {
       props: {},

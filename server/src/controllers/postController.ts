@@ -37,7 +37,7 @@ export default class PostController {
       postsMap.set(MAP_QUERY, posts);
     } else posts = postsMap.get(MAP_QUERY);
 
-    res.status(201).send({ posts, totalPages: await getTotalPages(locale) });
+    res.status(201).send({ posts, totalPages: await getTotalPages(query) });
   }
 
   static async getOne(req: Request, res: Response) {

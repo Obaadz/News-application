@@ -8,7 +8,7 @@ config({ path: ".env.local" });
 
 const PORT = process.env.PORT || 5000,
   DB_URI = process.env.DB_URI || "",
-  PAGE_SIZE = Number(process.env.PAGE_SIZE) || 10;
+  PAGE_SIZE = Number(process.env.PAGE_SIZE) || 9;
 
 const app = express();
 const bodyParser = {

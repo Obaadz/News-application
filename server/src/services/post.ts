@@ -54,8 +54,8 @@ export async function deletePost(query: FilterQuery<IPostDocument>) {
   await PostModel.deleteOne(query, { $unset: { title: 1 } });
 }
 
-export async function getTotalPages(locale: "en" | "ar") {
-  const count = await PostModel.countDocuments({ locale });
+export async function getTotalPages(query: FilterQuery<IPostDocument>) {
+  const count = await PostModel.countDocuments(query);
 
   return Math.ceil(count / PAGE_SIZE);
 }
